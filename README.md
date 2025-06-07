@@ -42,7 +42,7 @@ Example `config.json`:
   "host": "localhost"
 }
 
-## Available Make Commands
+## 💻 Available Make Commands
 
 Command: `make build`
 
@@ -89,6 +89,14 @@ You'll be prompted with:
 - Run `go run .` again.
 - Enter `c` to start the client.
 - The client will connect to the server using the hostname from `config.json` and the hardcoded port `4433`.
+- You'll be able to run the following options as the client to join a game, make a move, and resync game state:
+
+```[GAME MENU]
+1. Start Game
+2. Make Move
+3. Resync Game State
+4. Quit
+```
 
 ## 🧩 Protocol Overview
 
@@ -112,8 +120,14 @@ DFA Diagram:
 - The user does **not** need to know about the internal protocol — all logic is encapsulated in the client/server.
 - QUIC streams are opened per message to align with stream-per-action design.
 
+## 🧠 Implementation Reflection
+
+Focusing on implementing my QTGP protocol definition I worked on the past couple weeks really deepened my understanding of how QUIC works and allowed me to modify some of my design decisions I made previously. While my original protocol design provided a strong foundation, I needed a way to manage concurrent connection instead of just one single client talking to the server. Additionally, handling QUIC streams revealed the importance of properly opening and closing streams per message to avoid connenction timeouts. Overall, this process help iterate to me as a Software Developer that network engineering is highly iterative and you must constantly evolve and learn from issues to strengthen your implementation of your protocol.
+
 ## 📧 Contact
 
 Ashley Tulloch
+
 CS544 - Computer Networks
+
 ant87@drexel.edu
