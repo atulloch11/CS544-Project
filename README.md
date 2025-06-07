@@ -14,6 +14,7 @@ CS544-Project/
 ├── utils.go           # Helper functions for config, I/O, message framing
 ├── tls.go             # Self-signed TLS certificate generator
 ├── config.json        # JSON file to configure client (hostname)
+├── makefile           # makefile to run program as client or server
 └── go.mod             # Go module definition
 ```
 
@@ -24,6 +25,7 @@ CS544-Project/
 Clone the repository and navigate into the folder:
 
 `git clone https://github.com/your-username/CS544-Project.git`
+
 `cd CS544-Project`
 
 If you do not currently have Go 1.19+ - please navigate to this link and download the version for your system:
@@ -40,7 +42,33 @@ Example `config.json`:
   "host": "localhost"
 }
 
-## 🕹️ Running the Program
+## Available Make Commands
+
+Command: `make build`
+
+Description: Compiles all Go files
+
+Command: `make run-server`
+
+Description: Runs the server directly
+
+Command: `make run-client`
+
+Description: Runs the client directly
+
+Command: `make clean`
+
+Description: Deletes any built binary (if applicable)
+
+### Example Usage
+
+To start the server:
+`make run-server`
+
+To start the client:
+`make run-client`
+
+## 🕹️ Running the Program Locally
 
 Start the program using:
 

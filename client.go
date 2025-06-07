@@ -91,8 +91,8 @@ func sendJoinGame(conn quic.Connection) {
 	}
 	if ack.Type == "GAME_SETUP_ACK" {
 		fmt.Println("[CLIENT] ✅ Game Setup Acknowledged")
-		fmt.Printf("         Status: Success - Join Accepted")
-		fmt.Printf("         Agreed Options: Turn Timeouts Off")
+		fmt.Println("         Status: Success - Join Accepted")
+		fmt.Println("         Agreed Options: Turn Timeouts Off")
 		transitionTo(&currentState, StateInGame)
 	}
 }
