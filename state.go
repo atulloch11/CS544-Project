@@ -13,6 +13,7 @@ const (
 	StateClosed
 )
 
+// procotol string states
 func (s ProtocolState) String() string {
 	return [...]string{
 		"Start",

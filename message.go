@@ -1,5 +1,7 @@
 package main
 
+// message defines the structure of a protocol message exchanged between the client and server.
+// fields are tagged for JSON serialization to allow consistent encoding/decoding across the QUIC stream.
 type Message struct {
 	ProtocolVersion int    `json:"protocol_version"`
 	Type            string `json:"type"`

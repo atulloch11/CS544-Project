@@ -11,10 +11,14 @@ import (
 	quic "github.com/quic-go/quic-go"
 )
 
+// ClientConfig holds configuration values loaded from a JSON config file.
+// currently it includes only the server hostname or IP address.
 type ClientConfig struct {
 	Host string `json:"host"`
 }
 
+// method reads and parses a JSON config file from the specified path.
+// it returns a ClientConfig object or an error if loading or decoding fails.
 func loadConfig(path string) (ClientConfig, error) {
 	var config ClientConfig
 	data, err := ioutil.ReadFile(path)
@@ -25,6 +29,9 @@ func loadConfig(path string) (ClientConfig, error) {
 	return config, err
 }
 
+// method encodes a Message struct into JSON, prepends it with a 4-byte length
+// prefix, and sends it over the provided QUIC stream.
+// this ensures the receiver knows exactly how many bytes to read for the full message.
 func sendMessage(stream quic.Stream, msg Message) {
 	body, err := json.Marshal(msg)
 	if err != nil {
@@ -47,6 +54,9 @@ func sendMessage(stream quic.Stream, msg Message) {
 	}
 }
 
+// method reads a full message from the given QUIC stream by first reading a 4-byte
+// length prefix, then reading and decoding the JSON payload of that length.
+// it returns a decoded Message struct or an error if reading or decoding fails.
 func readMessage(stream quic.Stream) (Message, error) {
 	var msg Message
 

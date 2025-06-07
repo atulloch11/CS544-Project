@@ -10,6 +10,8 @@ import (
 	quic "github.com/quic-go/quic-go"
 )
 
+// method to start a QUIC sever to listen on the user provided host and hardcoded port
+// continously accepts incoming connections and spawns goroutines to handle each one
 func runServer(host string) {
 	addr := fmt.Sprintf("%s:%d", host, ServerPort)
 	listener, err := quic.ListenAddr(addr, generateTLSConfig(), nil)
@@ -30,6 +32,9 @@ func runServer(host string) {
 	}
 }
 
+// manages a single QUIC connection from a client
+// each client connection maintains its own protocol state for DFA logic
+// each separate stream opened by client, creats a goroutine
 func handleClient(conn quic.Connection) {
 	defer conn.CloseWithError(0, "client handler done")
 	log.Println("[SERVER] Handling new client...")
@@ -47,6 +52,9 @@ func handleClient(conn quic.Connection) {
 	}
 }
 
+// read and process a message on an incoming stream
+// validates the client's current protocol state, performs transitions,
+// sends response message based on message type to client
 func handleStream(stream quic.Stream, clientState *ProtocolState) {
 	msg, err := readMessage(stream)
 	if err != nil {
@@ -62,6 +70,8 @@ func handleStream(stream quic.Stream, clientState *ProtocolState) {
 		msg.Type, msg.PlayerID, msg.GameID, msg.GameState)
 
 	switch msg.Type {
+
+	// handle client request to join a game
 	case "JOIN_GAME_REQUEST":
 		if *clientState == StateStart {
 			transitionTo(clientState, StateWaitingForJoin)
@@ -83,6 +93,7 @@ func handleStream(stream quic.Stream, clientState *ProtocolState) {
 		sendMessage(stream, ack)
 		transitionTo(clientState, StateInGame)
 
+	// handle client sending a game state update (i.e. moving in game)
 	case "STATE_UPDATE":
 		if *clientState != StateInGame {
 			log.Printf("[SERVER] Invalid state (%v) for STATE_UPDATE\n", *clientState)
@@ -95,6 +106,7 @@ func handleStream(stream quic.Stream, clientState *ProtocolState) {
 			Type:            "STATE_ACK",
 		})
 
+	// handle client requesting a resync to game state
 	case "STATE_RESYNC_REQUEST":
 		if *clientState != StateInGame {
 			log.Printf("[SERVER] Invalid state (%v) for STATE_RESYNC_REQUEST\n", *clientState)

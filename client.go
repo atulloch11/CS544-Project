@@ -14,7 +14,7 @@ import (
 
 var currentState ProtocolState = StateStart
 
-// Method to run the client and connect to server
+// method to connect to the QUIC server and presents the user with a game menu.
 func runClient(host string) {
 	reader := bufio.NewReader(os.Stdin)
 	addr := fmt.Sprintf("%s:%d", host, ServerPort)
@@ -58,6 +58,8 @@ func runClient(host string) {
 	}
 }
 
+// method handles the JOIN_GAME_REQUEST.
+// It ensures the client is in a valid state, opens a new QUIC stream, sends the request, and processes the server's response.
 func sendJoinGame(conn quic.Connection) {
 	if currentState != StateStart {
 		log.Printf("[CLIENT] ⚠️ Cannot start game in current state: %v\n", currentState)
@@ -95,6 +97,8 @@ func sendJoinGame(conn quic.Connection) {
 	}
 }
 
+// method sends a STATE_UPDATE message containing the client's move.
+// A new stream is opened for the request and closed afterward.
 func sendStateUpdate(conn quic.Connection) {
 	if currentState != StateInGame {
 		log.Printf("[CLIENT] ⚠️ Cannot make move in current state: %v\n", currentState)
@@ -124,6 +128,8 @@ func sendStateUpdate(conn quic.Connection) {
 	}
 }
 
+// method sends a STATE_RESYNC_REQUEST message to the server.
+// It is used when the client believes its state may be out-of-sync.
 func sendResyncRequest(conn quic.Connection) {
 	if currentState != StateInGame {
 		log.Printf("[CLIENT] ⚠️ Cannot request resync in current state: %v\n", currentState)
